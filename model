@@ -1,0 +1,34 @@
+# Author: Arjun S Kulathuvayal.
+from ase import Atoms, io
+from ase.io import read
+from pymatgen.core import Structure
+import numpy as np
+
+
+def main():
+    strt = Structure.from_file('CONTCAR')
+    ase_strt = Atoms([site.species_string for site in strt.sites], strt.cart_coords)
+    ase_strt.center(vacuum=2, axis=0)
+    ase_strt.center(vacuum=2, axis=1)
+    ase_strt.center(vacuum=2, axis=2)
+    ase_strt.write('TS1.vasp')
+    return print("Slab generated")
+
+def move_functional(how_far, i_dir_atom, f_dir_atom, which_atoms):
+    in_dir_atom, fi_dir_atom = i_dir_atom-1, f_dir_atom-1
+    strt = Structure.from_file('CONTCAR')
+    dir_in, dir_fin = strt.sites[in_dir_atom].coords, strt.sites[fi_dir_atom].coords
+
+    direction = dir_fin - dir_in
+    direction = direction / np.linalg.norm(direction)
+    displacement = how_far * direction
+
+    indices = [i-1 for i in which_atoms]
+    for i in indices:
+        strt[i].coords += displacement
+
+    strt.to(fmt="poscar", filename="POSCAR_modified.vasp")
+
+
+if __name__ == '__main__':
+    move_functional(how_far=0.10221, i_dir_atom=7, f_dir_atom=24, which_atoms=[24])
