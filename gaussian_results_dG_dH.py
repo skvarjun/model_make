@@ -1,5 +1,5 @@
 
-# Author: Arjun S Kulathuvayal.
+# Author: Arjun S Kulathuvayal. Intellectual property. Copyright strictly restricted
 import numpy as np
 import matplotlib.pyplot as plt
 font = {'family': 'serif',
@@ -25,16 +25,25 @@ def get_value(file_path, key_word):
 
 
 def fetch_data(f_path):
+    #Fetching values
     E_DFT = -get_value(f_path, "HF=-")
     E_ZPE = get_value(f_path, "Zero-point correction=")
     E_Tot = get_value(f_path, "Thermal correction to Energy=")
-    H_Cor = get_value(f_path, "Thermal correction to Gibbs Free Energy=")
-    G_Cor = get_value(f_path, " Sum of electronic and zero-point Energies=")
+    H_Cor = get_value(f_path, "Thermal correction to Enthalpy=")
+    G_Cor = get_value(f_path, "Thermal correction to Gibbs Free Energy=")
+
+    #Executing Corrections
+    Corrected_E0 = E_DFT + E_ZPE
+    Corrected_E_tot = E_DFT + E_Tot
+    Corrected_H = E_DFT + H_Cor #Use for enthalpy step plot
+    Corrected_G = E_DFT + G_Cor #Use for Gibbs free energy step plot
+
+
 
     E_DFT_Plus_E_ZPE = E_DFT + E_ZPE 
     E_DFT_Plus_E_Tot = E_DFT + E_Tot
-    E_DFT_Plus_H_Cor = E_DFT + H_Cor
-    E_DFT_Plus_G_Cor = E_DFT + G_Cor
+    E_DFT_Plus_H_Cor = E_DFT + H_Cor + E_ZPE
+    E_DFT_Plus_G_Cor = G_Cor
 
     return E_DFT_Plus_H_Cor, E_DFT_Plus_G_Cor
 
